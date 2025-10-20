@@ -14,7 +14,9 @@ export class UserRepository {
         const user = await prisma.user.create({
             data: {
                 name: userDTO.name,
+                lastname: userDTO.lastname,
                 email: userDTO.email,
+                direccion: userDTO.direccion,
                 password: hashedPassword
 
             }
@@ -72,5 +74,16 @@ export class UserRepository {
             where: { email }
         })
     }
+
+
+    async updatePassword(id: number, newPassword: string) {
+        const { hash } = bcrypt;
+        const hashedPassword = await hash(newPassword, 10)
+        return await prisma.user.update({
+            where: { id },
+            data: { password: hashedPassword }
+        })
+    }
+
 
 }

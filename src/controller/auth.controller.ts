@@ -1,31 +1,38 @@
+
 import type { UserDTO } from '../dto/user.dto.js';
 import { UserRepository } from '../repository/user.repository.js';
 import { AuthService } from '../service/auth.service.js';
 import { type Request, type Response } from "express";
 import { verifyToken } from '../utils/verifyToken.js';
+import { SendEmail } from '../service/send-email.service.js';
+import { PasswordResetService } from '../service/password-reset.service.js';
+import { PasswordResetRepository } from '../repository/password-reset.repository.js';
 const userRepository = new UserRepository();
-const authService = new AuthService(userRepository);
+const passoworResetRepository = new PasswordResetRepository();
+const passwordResetService = new PasswordResetService(passoworResetRepository)
+const sendEmail = new SendEmail();
+const authService = new AuthService(userRepository, sendEmail, passwordResetService);
 
 export class AuthController {
 
-    constructor() { }
+    constructor() {}
 
 
     public createUser = async (req: Request, res: Response) => {
 
         try {
-            const { name, email, password } = req.body;
+            const { name, email, lastname, direccion, password } = req.body;
 
             if (!name || !email || !password) {
                 return res.status(400).json({ message: "Faltan datos requeridos" });
             }
 
-            const userDTO: UserDTO = { name, email, password };
+            const userDTO: UserDTO = { name, email, lastname, direccion, password };
             const user = await authService.createUser(userDTO);
 
             res.status(201).json(user);
         } catch (error) {
-            console.error(error);
+
             res.status(500).json({ message: "Error al crear usuario" });
         }
 
@@ -53,9 +60,8 @@ export class AuthController {
 
             return res.status(200).json({ user: { email: user.email } });
 
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: "Error al iniciar session" });
+        } catch (error: any) {
+            res.status(401).json(error.message);
         }
     }
 
@@ -67,7 +73,7 @@ export class AuthController {
 
             const user = await authService.getUser(email);
 
-            if (!user || !user.refreshToken) throw new Error("Acceso denegado");
+            if (!user || !user.refreshToken) return res.status(401).json({ message: "Acceso denegado" })
 
             try {
                 verifyToken(user.refreshToken, "REFRESH_SECRET");
@@ -93,5 +99,60 @@ export class AuthController {
 
     public pruebaRuta = async (req: Request, res: Response) => {
         res.json({ message: "Ruta segura" })
+    }
+
+    public recoverPassword = async (req: Request, res: Response) => {
+
+        try {
+            const { email } = req.body;
+
+            if (!email) return res.status(400).json({ message: "Email vacio" })
+            const message = await authService.recoverPassword(email);
+            return res.status(200).json(message);
+        } catch (error: any) {
+            return res.status(401).json({ message: error.message })
+        }
+    }
+
+    public verifyToken = async (req: Request, res: Response) => {
+
+        try {
+
+            const token = req.query.token as string;
+
+            if (!token) return res.status(401).json({ message: "Token invalido" })
+
+
+            const tokenVerificado = await authService.verifyToken(token);
+
+            if (!tokenVerificado) return res.status(401).json({ message: "Ocurrio un error en la verificacion del token" });
+
+            return res.status(200).json(tokenVerificado);
+
+        } catch (error: any) {
+            return res.status(400).json({ message: error.message });
+
+        }
+
+
+    }
+
+
+    public updatePassword = async (req: Request, res: Response) => {
+
+        try {
+            const { id, name, newPassword, confirmPassword, token } = req.body;
+
+            if (!id || !name || !newPassword || !confirmPassword) return res.status(400).json({ message: "Error" })
+
+            if (newPassword != confirmPassword) return res.status(400).json({ message: "Contraseñas invalidad" });
+
+            const update = await authService.updatePassword(id, newPassword, token);
+
+            return res.status(200).json(update);
+        } catch (error: any) {
+            return res.status(400).json(error.message)
+        }
+
     }
 }

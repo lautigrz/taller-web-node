@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-
 }
 
 datasource db {
@@ -15,10 +14,23 @@ datasource db {
 }
 
 model User {
-   id       Int      @id @default(autoincrement())
-  name     String
-  email    String   @unique
-  password String
-  direccion String
-  refreshToken String? 
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  lastname            String
+  email               String               @unique
+  password            String
+  direccion           String
+  refreshToken        String?
+  passwordResetTokens PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([token])
 }
