@@ -22,7 +22,7 @@ export class UserRepository {
             }
         })
 
-        const { password, ...userWithoutPassword } = user;
+        const { password, id,refreshToken, email, direccion,...userWithoutPassword } = user;
 
         return userWithoutPassword;
     }
@@ -41,7 +41,7 @@ export class UserRepository {
 
         const isValid = await compare(password, user.password);
 
-        if (!isValid) throw new Error("Contraseña incorrecta");
+        if (!isValid) throw new Error("Ocurrio un error, intentelo de nuevo.");
 
         const { password: _, ...userWithoutPassword } = user;
 

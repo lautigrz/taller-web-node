@@ -58,7 +58,7 @@ export class AuthController {
 
             await authService.saveRefreshToken(user.email, refreshToken)
 
-            return res.status(200).json({ user: { email: user.email } });
+            return res.status(200).json({ user: { name: user.name } });
 
         } catch (error: any) {
             res.status(401).json(error.message);
