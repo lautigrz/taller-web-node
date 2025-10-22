@@ -55,7 +55,7 @@ export class AuthService {
 
         const token = await this.passwordReset.saveTokenResetPassword(userExist.id);
 
-        const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+        const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password?token=${token}`;
 
         html = html.replace("{{resetUrl}}", resetUrl);
 
@@ -65,22 +65,22 @@ export class AuthService {
             html: html
         })
 
-        return { message: "Email de recuperación enviado si el correo existe" };
+        return { message: "Correo de recuperación enviado. Verifique la bandeja de entrada de su correo electrónico." };
     }
 
     async verifyToken(token: string) {
 
         const tokenData = await this.validateToken(token);
 
-        return tokenData.user;
+        return tokenData;
 
     }
 
-    async updatePassword(id: number, newPassword: string, token: string) {
+    async updatePassword(newPassword: string, token: string) {
 
-        await this.validateToken(token)
+       const userUpdate = await this.validateToken(token)
 
-        const user = await this.userRepository.updatePassword(id, newPassword);
+        const user = await this.userRepository.updatePassword(userUpdate.id, newPassword);
 
         await this.passwordReset.deleteToken(token);
         return user.name;
@@ -89,10 +89,10 @@ export class AuthService {
     private async validateToken(token: string) {
     const tokenData = await this.passwordReset.findToken(token);
 
-    if (!tokenData) throw new Error("Token inválido");
-    if (tokenData.expiresAt < new Date()) throw new Error("Token expirado");
+    if (!tokenData) throw new Error("Codigo de seguridad inválido");
+    if (tokenData.expiresAt < new Date()) throw new Error("Codigo de seguridad expirado");
 
-    return tokenData;
+    return tokenData.user;
 }
 
 

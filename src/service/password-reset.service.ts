@@ -1,5 +1,5 @@
 import type { PasswordResetRepository } from "../repository/password-reset.repository.js";
-
+import crypto from 'crypto';
 
 export class PasswordResetService{
 
@@ -7,7 +7,13 @@ export class PasswordResetService{
 
 
      async saveTokenResetPassword(userId: number){
-        const token = "sd1da";
+
+      const lastTokenUser = await this.passwordReset.findTokenForIdUser(userId);
+
+      if(lastTokenUser && lastTokenUser.expiresAt > new Date()) throw new Error("Ya hemos enviado un codigo de verificacion a su bandeja de correo electronico.")
+      
+
+        const token = crypto.randomBytes(8).toString('hex')
     
         return await this.passwordReset.saveTokenResetPassword(userId,token);
      }

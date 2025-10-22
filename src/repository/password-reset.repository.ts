@@ -29,6 +29,16 @@ export class PasswordResetRepository{
         })
     }
 
+    async findTokenForIdUser(userId: number){
+
+        return await prisma.passwordResetToken.findFirst({
+            where:{userId},
+            select: {
+                expiresAt: true
+            }
+        })
+    }
+
     async deleteToken(token: string){
         return await prisma.passwordResetToken.delete({
             where: {token}

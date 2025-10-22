@@ -141,13 +141,13 @@ export class AuthController {
     public updatePassword = async (req: Request, res: Response) => {
 
         try {
-            const { id, name, newPassword, confirmPassword, token } = req.body;
+            const {newPassword, confirmPassword, token } = req.body;
 
-            if (!id || !name || !newPassword || !confirmPassword) return res.status(400).json({ message: "Error" })
+            if (!token || !newPassword || !confirmPassword) return res.status(400).json({ message: "Error" })
 
             if (newPassword != confirmPassword) return res.status(400).json({ message: "Contraseñas invalidad" });
 
-            const update = await authService.updatePassword(id, newPassword, token);
+            const update = await authService.updatePassword(newPassword, token);
 
             return res.status(200).json(update);
         } catch (error: any) {

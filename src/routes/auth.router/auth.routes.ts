@@ -14,7 +14,7 @@ authRouter.get("/", jwtAuthorizationToken ,authController.pruebaRuta.bind(authCo
 
 authRouter.get("/refresh",authController.newToken.bind(authController));
 
-authRouter.get("/reset-password", authController.verifyToken.bind(authController))
+authRouter.get("/verify", authController.verifyToken.bind(authController))
 
 authRouter.put("/update-password",authController.updatePassword.bind(authController))
 export default authRouter;
