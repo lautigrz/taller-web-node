@@ -7,7 +7,6 @@ interface UserToken {
 export const verifyToken = (token: string, type: string): UserToken => {
   try {
     const secret = process.env[type] || "";
-    console.log(secret)
     const decoded = jwt.verify(token, secret) as UserToken;
 
     if (!decoded.email) {

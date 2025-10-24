@@ -15,7 +15,7 @@ const authService = new AuthService(userRepository, sendEmail, passwordResetServ
 
 export class AuthController {
 
-    constructor() {}
+    constructor() { }
 
 
     public createUser = async (req: Request, res: Response) => {
@@ -53,12 +53,20 @@ export class AuthController {
 
 
             res.cookie("accessToken", accessToken, {
-                httpOnly: true
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax"
             })
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                path: "/auth/refresh"
+            });
 
             await authService.saveRefreshToken(user.email, refreshToken)
 
-            return res.status(200).json({ user: { name: user.name } });
+            return res.status(200).json({ user: { email: user.email, name: user.name } });
 
         } catch (error: any) {
             res.status(401).json(error.message);
@@ -69,19 +77,16 @@ export class AuthController {
     public newToken = async (req: Request, res: Response) => {
 
         try {
-            const { email } = req.body;
+            const refreshToken = req.cookies?.refreshToken;
+            if (!refreshToken) return res.status(401).json({ message: 'No hay refresh token' });
+            
+            const emailDecoded = verifyToken(refreshToken, "REFRESH_SECRET");
 
-            const user = await authService.getUser(email);
+            const user = await authService.getUser(emailDecoded.email);
 
             if (!user || !user.refreshToken) return res.status(401).json({ message: "Acceso denegado" })
 
-            try {
-                verifyToken(user.refreshToken, "REFRESH_SECRET");
-            } catch {
-                return res.status(403).json({ message: "Refresh token inválido o expirado" });
-            }
-
-            const newToken = await authService.generateNewAcessToken(email);
+            const newToken = await authService.generateNewAcessToken(emailDecoded.email);
 
             res.cookie("accessToken", newToken, {
                 httpOnly: true
@@ -100,6 +105,12 @@ export class AuthController {
     public pruebaRuta = async (req: Request, res: Response) => {
         res.json({ message: "Ruta segura" })
     }
+
+    public getMe = async (req: Request, res: Response) => {
+
+        return res.json({ email: req.user.email })
+    }
+
 
     public recoverPassword = async (req: Request, res: Response) => {
 
@@ -120,7 +131,7 @@ export class AuthController {
 
             const token = req.query.token as string;
 
-            if (!token) return res.status(401).json({ message: "Token invalido" })
+            if (!token) return res.status(400).json({ message: "Token invalido" })
 
 
             const tokenVerificado = await authService.verifyToken(token);
@@ -130,7 +141,7 @@ export class AuthController {
             return res.status(200).json(tokenVerificado);
 
         } catch (error: any) {
-            return res.status(400).json({ message: error.message });
+            return res.status(500).json({ message: "Error interno del servidor" });
 
         }
 
@@ -141,11 +152,11 @@ export class AuthController {
     public updatePassword = async (req: Request, res: Response) => {
 
         try {
-            const {newPassword, confirmPassword, token } = req.body;
+            const { newPassword, confirmPassword, token } = req.body;
 
             if (!token || !newPassword || !confirmPassword) return res.status(400).json({ message: "Error" })
 
-            if (newPassword != confirmPassword) return res.status(400).json({ message: "Contraseñas invalidad" });
+            if (newPassword != confirmPassword) return res.status(400).json({ message: "Contraseñas invalidas" });
 
             const update = await authService.updatePassword(newPassword, token);
 

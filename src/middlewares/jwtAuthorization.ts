@@ -14,21 +14,23 @@ export const jwtAuthorizationToken = (
 ): void => {
     try {
 
+
         const token = req.cookies?.accessToken;
 
         if (!token) throw new Error();
 
-        const decodedToken: UserToken = verifyToken(token,"TOKEN_SECRET") as UserToken
 
-        res.locals.user = { email: decodedToken.email };
+        const decodedToken: UserToken = verifyToken(token, "TOKEN_SECRET") as UserToken
+
+        req.user = { email: decodedToken.email };
 
         next();
 
     } catch (error: any) {
-        if(error.name === "TokenExpiredError"){
+        if (error.name === "TokenExpiredError") {
             console.log("Token expirado")
         }
-    
+
         res.status(401).json({ message: "Token invalido!" });
     }
 }

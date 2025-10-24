@@ -12,9 +12,11 @@ authRouter.post("/recover", authController.recoverPassword.bind(AuthController))
 
 authRouter.get("/", jwtAuthorizationToken ,authController.pruebaRuta.bind(authController));
 
-authRouter.get("/refresh",authController.newToken.bind(authController));
+authRouter.post("/refresh",authController.newToken.bind(authController));
 
 authRouter.get("/verify", authController.verifyToken.bind(authController))
 
 authRouter.put("/update-password",authController.updatePassword.bind(authController))
+
+authRouter.get("/me",jwtAuthorizationToken,authController.getMe.bind(authController))
 export default authRouter;
