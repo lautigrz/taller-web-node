@@ -22,6 +22,8 @@ model User {
   direccion           String
   refreshToken        String?
   passwordResetTokens PasswordResetToken[]
+
+  carritos Carrito[]
 }
 
 model PasswordResetToken {
@@ -33,4 +35,47 @@ model PasswordResetToken {
   expiresAt DateTime
 
   @@index([token])
+}
+
+enum Genero {
+  MASCULINO
+  FEMENINO
+  UNISEX
+}
+
+model Producto {
+  id            Int      @id @default(autoincrement())
+  nombre        String
+  descripcion   String?
+  precio        Decimal  @db.Decimal(10, 2)
+  stock         Int      @default(0)
+  imagenUrl     String?
+  genero        Genero?
+  liga          String?
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  carritos CarritoProducto[]
+}
+
+model Carrito {
+  id       Int      @id @default(autoincrement())
+  user     User     @relation(fields: [userId], references: [id])
+  userId   Int
+  creadoEn DateTime @default(now())
+  activo   Boolean  @default(true)
+
+  productos CarritoProducto[]
+}
+
+model CarritoProducto {
+  id         Int      @id @default(autoincrement())
+  carrito    Carrito  @relation(fields: [carritoId], references: [id])
+  carritoId  Int
+  producto   Producto @relation(fields: [productoId], references: [id])
+  productoId Int
+  cantidad   Int      @default(1)
+  subtotal   Decimal? @db.Decimal(10, 2)
+
+  @@unique([carritoId, productoId])
 }
