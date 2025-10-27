@@ -40,15 +40,7 @@ export class ProductoService{
             throw new Error('Genero inválido');
         }
 
-        return await this.productoRepository.createProducto({
-        nombre,
-        precio,
-        ...(data.descripcion !== undefined && { descripcion: data.descripcion }),
-        ...(stock !== undefined && { stock }),
-        ...(data.imagenUrl !== undefined && { imagenUrl: data.imagenUrl }),
-        ...(genero !== undefined && { genero }),
-        ...(liga !== undefined && { liga }),
-    });
+        return;
 
 
     }

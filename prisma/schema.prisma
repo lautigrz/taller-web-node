@@ -44,18 +44,43 @@ enum Genero {
 }
 
 model Producto {
-  id            Int      @id @default(autoincrement())
+  id            Int               @id @default(autoincrement())
   nombre        String
   descripcion   String?
-  precio        Decimal  @db.Decimal(10, 2)
-  stock         Int      @default(0)
-  imagenUrl     String?
+  precio        Decimal           @db.Decimal(10, 2)
+  stock         Int               @default(0)
+  imagenes      Imagen[]
   genero        Genero?
-  liga          String?
-  creadoEn      DateTime @default(now())
-  actualizadoEn DateTime @updatedAt
+  creadoEn      DateTime          @default(now())
+  actualizadoEn DateTime          @updatedAt
+  equipoId      Int 
+  equipo        Equipo            @relation(fields: [equipoId], references: [id])
+  carritos      CarritoProducto[]
+ 
+}
 
-  carritos CarritoProducto[]
+model Imagen {
+  id         Int      @id @default(autoincrement())
+  url        String
+  orden      Int?    
+  productoId Int
+  producto   Producto @relation(fields: [productoId], references: [id])
+}
+
+model Liga {
+  id        Int        @id @default(autoincrement())
+  name      String
+  icon      String
+  equipos   Equipo[]
+}
+
+model Equipo {
+  id       Int        @id @default(autoincrement())
+  name     String
+  icon     String
+  ligaId   Int
+  liga     Liga       @relation(fields: [ligaId], references: [id])
+  Producto Producto[]
 }
 
 model Carrito {

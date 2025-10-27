@@ -5,7 +5,16 @@ export class ProductoRepository{
 
 async findAllProductos(){
 
-    return await prisma.producto.findMany();
+    return await prisma.producto.findMany(
+        {
+            include:{
+                equipo:{
+                    include:{liga : true}
+                },
+                imagenes:true
+            }
+        }
+    );
 }
 
 async findProductoById(id: number){
@@ -15,17 +24,25 @@ async findProductoById(id: number){
 }
 
 async createProducto(data:{
-    nombre:string;
-    descripcion?:string;
-    precio:number;
-    stock?:number;
-    imagenUrl?:string;
-    genero?:Genero;
-    liga?:string;
-
-}){
-    return await prisma.producto.create({data});
+    nombre: string;
+    descripcion?: string;
+    precio: number;
+    stock?: number;
+    genero?: Genero;
+    equipoId: number;
+    imagenes?: { url: string; orden?: number }[];
+}) {
+    return await prisma.producto.create({
+        data: {
+            ...data,
+            imagenes: {
+                create: data.imagenes || [], // crea imágenes si vienen, sino vacío
+            },
+        },
+    });
 }
+
+
 
 async updateProducto(id:number, data:{
     nombre?:string;
