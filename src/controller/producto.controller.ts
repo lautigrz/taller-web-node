@@ -1,73 +1,75 @@
-import {type Request, type Response } from "express";
+import { type Request, type Response } from "express";
 import { ProductoRepository } from "../repository/producto.repository.js";
 import { ProductoService } from "../service/producto.service.js";
 import type { Genero } from "../enums/Genero.js";
+import type { MulterRequest } from "../utils/multer.request.js";
+import type { CreateProductDto } from "../dto/producto.dto.js";
+import { LigaRepository } from "../repository/liga.repository.js";
 
 const productoRepository = new ProductoRepository();
-const productoService = new ProductoService(productoRepository);
+const ligaRepository = new LigaRepository();
+const productoService = new ProductoService(productoRepository, ligaRepository);
 
 
-export class ProductoController{
+export class ProductoController {
 
-    public getProductos = async (req: Request, res:Response) =>{
+    public getProductos = async (req: Request, res: Response) => {
 
-        try{
+        try {
             const productos = await productoService.obtenerProductos();
             res.status(200).json(productos);
-        }catch(error){
-            res.status(500).json({message: "Error al obtener productos", error});
+        } catch (error) {
+            res.status(500).json({ message: "Error al obtener productos", error });
         }
     }
 
 
-    public getProducto = async (req:Request, res:Response) =>{  
+    public getProducto = async (req: Request, res: Response) => {
         const id = Number(req.params.id);
 
-        if(isNaN(id)) return res.status(400).json("ID Inválido");
+        if (isNaN(id)) return res.status(400).json("ID Inválido");
 
-        try{
+        try {
             const producto = await productoService.obtenerProductoPorId(id);
-            if(!producto) return res.status(404).json({message: "Producto no encontrado"});
+            if (!producto) return res.status(404).json({ message: "Producto no encontrado" });
             res.status(200).json(producto);
-        }catch (error){
-            res.status(500).json({message: "No se pudo obtener el producto", error});
+        } catch (error) {
+            res.status(500).json({ message: "No se pudo obtener el producto", error });
 
         }
-    
+
     }
 
 
-    public crearProducto = async (req:Request, res:Response) =>{
-    
-        try{
-            const {nombre, descripcion, precio, stock, imagenUrl, genero, liga} = req.body;
+    public crearProducto = async (req: Request, res: Response) => {
 
-            const producto = await productoService.crearProducto({
-                nombre,
-                descripcion,
-                precio,
-                stock,
-                imagenUrl,
-                genero: genero as Genero,
-                liga
-            });
+        try {
 
-            res.status(201).json(producto);
+            const files = req.files as Express.Multer.File[] | undefined;
 
-        } catch (error: any){
-            res.status(500).json({message: "No se pudo crear el producto", error})
+            const data: CreateProductDto = req.body;
+
+            console.log('Datos del producto:', data);
+
+            if (!files) {return }
+            
+            const algo =  await productoService.crearProducto(data, files);
+
+        } catch (error: any) {
+             console.error("❌ Error en crearProducto:", error);
+            res.status(500).json({ message: "No se pudo crear el producto", error })
         }
-    
+
     }
 
 
-    public actualizarProducto = async (req:Request, res:Response) =>{
-    
+    public actualizarProducto = async (req: Request, res: Response) => {
+
         const id = Number(req.params.id);
-        if(isNaN(id)) return res.status(400).json("ID Invalido");
+        if (isNaN(id)) return res.status(400).json("ID Invalido");
 
-        try{
-            const {nombre, descripcion, precio, stock, imagenUrl, genero, liga} = req.body;
+        try {
+            const { nombre, descripcion, precio, stock, imagenUrl, genero, liga } = req.body;
             const productoActualizado = await productoService.actualizarProducto(id, {
                 nombre,
                 descripcion,
@@ -80,28 +82,28 @@ export class ProductoController{
 
             res.status(200).json(productoActualizado);
 
-        } catch (error : any){
-            if(error.message === "Producto no existente"){
-                return res.status(404).json({message: "Producto no encontrado"});
+        } catch (error: any) {
+            if (error.message === "Producto no existente") {
+                return res.status(404).json({ message: "Producto no encontrado" });
             }
 
-            res.status(500).json({message: "No se pudo actualizar el producto", error});
+            res.status(500).json({ message: "No se pudo actualizar el producto", error });
         }
 
-        
+
     }
 
 
-    public eliminarProducto = async (req:Request, res:Response) =>{
-    
+    public eliminarProducto = async (req: Request, res: Response) => {
+
         const id = Number(req.params.id);
-        if(isNaN(id)) return res.status(400).json("ID Invalido");
+        if (isNaN(id)) return res.status(400).json("ID Invalido");
 
 
-        try{
+        try {
             await productoService.eliminarProducto(id);
             res.status(204).send();
-        }catch (error: any) {
+        } catch (error: any) {
             if (error.message === "ProductoNoExiste") {
                 return res.status(404).json({ message: "Producto no encontrado" });
             }

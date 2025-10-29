@@ -2,80 +2,61 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-
+    /*
     const premier = await prisma.liga.create({
         data: {
             name: 'Premier League',
-            icon: 'https://mcdn.wallpapersafari.com/medium/10/22/q8ePzp.jpg', // icono genérico, puede ser cualquier url
+            icon: 'https://mcdn.wallpapersafari.com/medium/10/22/q8ePzp.jpg',
+        },
+    });
+*/
+    const liverpool = await prisma.equipo.update({
+        where: { id: 1 },
+        data: {
+
+            icon: 'https://th.bing.com/th?id=OSB.PGJxes%7caBVYuf_nP8XCIlg--.png&w=60&h=60&c=6&qlt=90&o=6&dpr=2&pid=BingSports',
+
         },
     });
 
-    // Crear equipos
-    const liverpool = await prisma.equipo.create({
+    const arsenal = await prisma.equipo.update({
+        where: { id: 2 },
         data: {
-            name: 'Liverpool',
-            icon: 'liverpool.png',
-            ligaId: premier.id,
+
+            icon: 'https://www.bing.com/th/id/OSB.VXxjrqWZWwmw2Ju4T8AJJA--.png?w=60&h=60&c=6&qlt=90&o=6&dpr=2&pid=BingSports',
+
         },
     });
 
-    const arsenal = await prisma.equipo.create({
+    const chelsea = await prisma.equipo.update({
+        where: { id: 3 },
         data: {
-            name: 'Arsenal',
-            icon: 'arsenal.png',
-            ligaId: premier.id,
+
+            ligaId: 1,
         },
     });
 
-    // Crear productos para Liverpool
-    const prodLiverpool1 = await prisma.producto.create({
+    const manCity = await prisma.equipo.update({
+        where: { id: 4 },
         data: {
-            nombre: 'Camiseta Local Liverpool 23/24',
-            descripcion: 'Camiseta oficial local temporada 23/24',
-            precio: 120.99,
-            stock: 10,
-            equipoId: liverpool.id,
-            imagenes: {
-                create: [
-                    { url: '/images/premier-league/liverpool/liverpool-1-2019-2020.webp', orden: 1 },
-                    { url: '/images/premier-league/liverpool/liverpool-2-2019-2020.webp', orden: 2 },
-                    { url: '/images/premier-league/liverpool/liverpool-3-2019-2020.webp', orden: 3 },
-                ],
-            },
+
+            ligaId: 1,
         },
     });
 
-    // Crear productos para Arsenal
-    const prodArsenal1 = await prisma.producto.create({
+    const manUnited = await prisma.equipo.update({
+        where: { id: 5 },
         data: {
-            nombre: 'Camiseta Local Arsenal 23/24',
-            descripcion: 'Camiseta oficial local temporada 23/24',
-            precio: 115.50,
-            stock: 8,
-            equipoId: arsenal.id,
-            imagenes: {
-                create: [
-                    { url: '/images/premier-league/arsenal/arsenal-1-2016-2017.webp', orden: 1 },
-                    { url: '/images/premier-league/arsenal/arsenal-2-2016-2017.webp', orden: 2 },
-                    { url: '/images/premier-league/arsenal/arsenal-3-2016-2017.webp', orden: 3 },
-                ],
-            },
+
+            ligaId: 1,
         },
     });
-     const prodArsenal3 = await prisma.producto.create({
+
+    const tot = await prisma.equipo.update({
+        where: { id: 6 },
         data: {
-            nombre: 'Camiseta Local Arsenal 23/24',
-            descripcion: 'Camiseta oficial local temporada 23/24',
-            precio: 115.50,
-            stock: 8,
-            equipoId: arsenal.id,
-            imagenes: {
-                create: [
-                    { url: '/images/premier-league/arsenal/arsenal-4-2012-2013.webp', orden: 1 },
-                    { url: '/images/premier-league/arsenal/arsenal-5-2012-2013.webp', orden: 2 },
-                    { url: '/images/premier-league/arsenal/arsenal-6-2012-2013.webp', orden: 3 },
-                ],
-            },
+
+            ligaId: 1,
         },
     });
 
