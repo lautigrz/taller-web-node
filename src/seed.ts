@@ -2,64 +2,45 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-    /*
-    const premier = await prisma.liga.create({
+    
+    const liga = await prisma.liga.create({
         data: {
-            name: 'Premier League',
+            name: 'La Liga',
             icon: 'https://mcdn.wallpapersafari.com/medium/10/22/q8ePzp.jpg',
         },
     });
-*/
-    const liverpool = await prisma.equipo.update({
-        where: { id: 1 },
-        data: {
 
-            icon: 'https://th.bing.com/th?id=OSB.PGJxes%7caBVYuf_nP8XCIlg--.png&w=60&h=60&c=6&qlt=90&o=6&dpr=2&pid=BingSports',
+    const barcelona = await prisma.equipo.create({
+   
+        data: {
+            name: 'FC Barcelona',
+            ligaId: liga.id,
+            icon: 'https://www.bing.com/th/id/OSB.HUhNQYtTYvLwMeBbN6jtpQ--.png?w=60&h=60&c=6&qlt=90&o=6&dpr=2&pid=BingSports',
 
         },
     });
 
-    const arsenal = await prisma.equipo.update({
-        where: { id: 2 },
+       const madird = await prisma.equipo.create({
+   
         data: {
-
-            icon: 'https://www.bing.com/th/id/OSB.VXxjrqWZWwmw2Ju4T8AJJA--.png?w=60&h=60&c=6&qlt=90&o=6&dpr=2&pid=BingSports',
+            name: 'Real Madrid',
+            ligaId: liga.id,
+            icon: 'https://www.bing.com/th/id/OSB.iACK1IFXXDNVcL9vAy568w--.png?w=60&h=60&c=6&qlt=90&o=6&dpr=2&pid=BingSports',
 
         },
     });
 
-    const chelsea = await prisma.equipo.update({
-        where: { id: 3 },
+    const atl = await prisma.equipo.create({
+   
         data: {
+            name: 'Atletico de Madrid',
+            ligaId: liga.id,
+            icon: 'https://th.bing.com/th/id/OSB.6FU4bH2DWUoELzbC4UrYgw--.png?w=60&h=60&c=6&qlt=90&o=6&dpr=2&pid=BingSports',
 
-            ligaId: 1,
         },
     });
 
-    const manCity = await prisma.equipo.update({
-        where: { id: 4 },
-        data: {
-
-            ligaId: 1,
-        },
-    });
-
-    const manUnited = await prisma.equipo.update({
-        where: { id: 5 },
-        data: {
-
-            ligaId: 1,
-        },
-    });
-
-    const tot = await prisma.equipo.update({
-        where: { id: 6 },
-        data: {
-
-            ligaId: 1,
-        },
-    });
-
+   
     console.log('Seed completado ✅');
 }
 

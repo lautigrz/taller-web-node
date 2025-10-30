@@ -55,8 +55,10 @@ export class ProductoController {
             
             const algo =  await productoService.crearProducto(data, files);
 
+            const producto = await productoService.obtenerProductoPorId(algo.id);
+            return res.status(201).json(producto);
         } catch (error: any) {
-             console.error("❌ Error en crearProducto:", error);
+             console.error("Error en crearProducto:", error);
             res.status(500).json({ message: "No se pudo crear el producto", error })
         }
 

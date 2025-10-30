@@ -10,7 +10,12 @@ export class LigaRepository {
    async findEquipoForLiga(idLiga: number) {
     return prisma.liga.findUnique({
         where: { id: idLiga },
-        include: { equipos: true }
+        include: { 
+            equipos:{
+                orderBy: { name: 'asc' 
+                }
+            }
+        }
     });
 }
 

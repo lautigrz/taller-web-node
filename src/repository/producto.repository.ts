@@ -22,11 +22,17 @@ export class ProductoRepository {
     }
 
     async findProductoById(id: number) {
-
         return await prisma.producto.findUnique({
-            where: { id }
+            where: { id },
+            include: {
+                equipo: {
+                    include: { liga: true }
+                },
+                imagenes: true
+            }
         });
     }
+
 
     async createProducto(producto: CreateProductDto, images: string[]) {
         return await prisma.producto.create({
