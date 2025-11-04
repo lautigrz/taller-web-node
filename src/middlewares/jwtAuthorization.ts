@@ -5,6 +5,7 @@ import { verifyToken } from '../utils/verifyToken.js';
 
 interface UserToken extends jwt.JwtPayload {
     email: string;
+    rol: string;
 }
 
 export const jwtAuthorizationToken = (
@@ -22,7 +23,7 @@ export const jwtAuthorizationToken = (
 
         const decodedToken: UserToken = verifyToken(token, "TOKEN_SECRET") as UserToken
 
-        req.user = { email: decodedToken.email };
+        req.user = { email: decodedToken.email, rol: decodedToken.rol };
 
         next();
 

@@ -1,8 +1,22 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Rol } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-    
+         const { hash } = bcrypt;
+                const hashedPassword = await hash('admin123', 10)
+    const admin = await prisma.user.create({
+        data:{
+            name: 'admin',
+            lastname:'admin',
+            email: 'admin@gmail.com',
+            password: hashedPassword,
+            rol: Rol.ADMIN,
+            direccion: 'Calle Admin 123'
+        }
+    })
+
+    /*
     const liga = await prisma.liga.create({
         data: {
             name: 'La Liga',
@@ -40,7 +54,7 @@ async function main() {
         },
     });
 
-   
+    */
     console.log('Seed completado ✅');
 }
 

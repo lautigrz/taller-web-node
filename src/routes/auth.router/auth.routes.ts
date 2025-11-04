@@ -10,7 +10,7 @@ authRouter.post('/login',authController.authenticationUser.bind(authController))
 
 authRouter.post("/recover", authController.recoverPassword.bind(AuthController))
 
-authRouter.get("/", jwtAuthorizationToken ,authController.pruebaRuta.bind(authController));
+authRouter.post("/logout", jwtAuthorizationToken ,authController.logout.bind(authController));
 
 authRouter.post("/refresh",authController.newToken.bind(authController));
 

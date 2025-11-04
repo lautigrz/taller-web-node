@@ -21,6 +21,7 @@ model User {
   password            String
   direccion           String
   refreshToken        String?
+  rol                 Rol                  @default(CLIENTE)
   passwordResetTokens PasswordResetToken[]
 
   carritos Carrito[]
@@ -111,3 +112,10 @@ model CarritoProducto {
 
   @@unique([carritoId, productoId])
 }
+
+enum Rol {
+  CLIENTE
+  ADMIN
+}
+
+

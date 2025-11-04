@@ -26,7 +26,7 @@ export class AuthService {
         const user = await this.userRepository.authenticationUser(email, password);
         if (!user) throw new Error("Usuario no encontrado");
 
-        const accessToken = generateAccessToken(user.email);
+        const accessToken = generateAccessToken(user.email, user.rol);
         const refreshToken = generateRefreshToken(user.email);
 
         return { user, accessToken, refreshToken };
@@ -40,8 +40,8 @@ export class AuthService {
         return await this.userRepository.getUser(email);
     }
 
-    async generateNewAcessToken(email: string) {
-        return await generateAccessToken(email);
+    async generateNewAcessToken(email: string, rol: string) {
+        return await generateAccessToken(email, rol);
     }
 
     async recoverPassword(email: string) {

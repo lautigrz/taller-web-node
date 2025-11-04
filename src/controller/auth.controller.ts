@@ -65,8 +65,8 @@ export class AuthController {
             });
 
             await authService.saveRefreshToken(user.email, refreshToken)
-
-            return res.status(200).json({ user: { email: user.email, name: user.name } });
+         
+            return res.status(200).json({ email: user.email, name: user.name, rol: user.rol });
 
         } catch (error: any) {
             res.status(401).json(error.message);
@@ -79,14 +79,14 @@ export class AuthController {
         try {
             const refreshToken = req.cookies?.refreshToken;
             if (!refreshToken) return res.status(401).json({ message: 'No hay refresh token' });
-            
+
             const emailDecoded = verifyToken(refreshToken, "REFRESH_SECRET");
 
             const user = await authService.getUser(emailDecoded.email);
 
             if (!user || !user.refreshToken) return res.status(401).json({ message: "Acceso denegado" })
 
-            const newToken = await authService.generateNewAcessToken(emailDecoded.email);
+            const newToken = await authService.generateNewAcessToken(emailDecoded.email, user.rol);
 
             res.cookie("accessToken", newToken, {
                 httpOnly: true
@@ -101,14 +101,10 @@ export class AuthController {
 
     }
 
-
-    public pruebaRuta = async (req: Request, res: Response) => {
-        res.json({ message: "Ruta segura" })
-    }
-
     public getMe = async (req: Request, res: Response) => {
-
-        return res.json({ email: req.user.email })
+        const user = await authService.getUser(req.user.email);
+        if(!user) return res.status(404).json({message: "Usuario no encontrado"});
+        return res.json({name:user.name, email: user.email, rol: user.rol })
     }
 
 
@@ -163,6 +159,27 @@ export class AuthController {
             return res.status(200).json(update);
         } catch (error: any) {
             return res.status(400).json(error.message)
+        }
+
+    }
+
+    public logout = async (re: Request, res: Response) => {
+        try {
+            res.clearCookie("accessToken", {
+                httpOnly: true,
+                secure: false,       
+                sameSite: "lax", 
+            });
+
+            res.clearCookie("refreshToken", {
+                path: "/auth/refresh",
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+            });
+            return res.status(200).json({ message: "Logout exitoso" });
+        } catch (error) {
+            return res.status(500).json({ message: 'Error al cerrar sesión' });
         }
 
     }
