@@ -52,18 +52,24 @@ export class ProductoService {
         return await this.productoRepository.updateProducto(id, data);
     }
 
-    async eliminarProducto(id: number) {
+    async cambiarEstadoProducto(id: number, estado: boolean) {
 
         try {
-
-            return await this.productoRepository.deleteProducto(id);
-        } catch (error: any) {
-            if (error.code === "P2025") {
+            const producto = await this.obtenerProductoPorId(id);
+            if (!producto) {
                 throw new Error("Producto no existente");
             }
-            throw error;
+            return await this.productoRepository.cambiarEstadoProducto(id, !producto.habilitado);
+        } catch (error: any) {
+
+            throw new Error("Producto no existente");
+
         }
 
+    }
+
+    async findAllProductosDisabled(){
+        return await this.productoRepository.findAllProductosDisabled();
     }
 
     private sanitizeName(name: string): string {

@@ -11,6 +11,21 @@ export class ProductoRepository {
 
         return await prisma.producto.findMany(
             {
+                where: { habilitado: true },
+                include: {
+                    equipo: {
+                        include: { liga: true }
+                    },
+                    imagenes: true
+                }
+            }
+        );
+    }
+        async findAllProductosDisabled() {
+
+        return await prisma.producto.findMany(
+            {
+                where: { habilitado: false },
                 include: {
                     equipo: {
                         include: { liga: true }
@@ -76,9 +91,10 @@ export class ProductoRepository {
 
     }
 
-    async deleteProducto(id: number) {
-        return await prisma.producto.delete({
-            where: { id }
+    async cambiarEstadoProducto(id: number, estado: boolean) {
+        return await prisma.producto.update({
+            where: { id },
+            data: { habilitado: estado }
         })
     }
 

@@ -1,3 +1,4 @@
+
 import { type Request, type Response } from "express";
 import { ProductoRepository } from "../repository/producto.repository.js";
 import { ProductoService } from "../service/producto.service.js";
@@ -96,14 +97,15 @@ export class ProductoController {
     }
 
 
-    public eliminarProducto = async (req: Request, res: Response) => {
+    public cambiarEstadoProducto = async (req: Request, res: Response) => {
 
         const id = Number(req.params.id);
         if (isNaN(id)) return res.status(400).json("ID Invalido");
 
 
         try {
-            await productoService.eliminarProducto(id);
+            
+            await productoService.cambiarEstadoProducto(id,false);
             res.status(204).send();
         } catch (error: any) {
             if (error.message === "ProductoNoExiste") {
@@ -112,5 +114,15 @@ export class ProductoController {
             res.status(500).json({ message: "No se pudo eliminar el producto", error });
         }
     }
+      public getProductosDisabled = async (req: Request, res: Response) => {
 
+        try {
+            const productos = await productoService.findAllProductosDisabled();
+            res.status(200).json(productos);
+        } catch (error) {
+            res.status(500).json({ message: "Error al obtener productos", error });
+        }
+    }
+
+  
 }

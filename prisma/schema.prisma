@@ -55,6 +55,7 @@ model Producto {
   creadoEn      DateTime          @default(now())
   actualizadoEn DateTime          @updatedAt
   equipoId      Int
+  habilitado    Boolean           @default(true)
   equipo        Equipo            @relation(fields: [equipoId], references: [id])
   carritos      CarritoProducto[]
   tallas        Talla[]           @relation("ProductoTallas")
