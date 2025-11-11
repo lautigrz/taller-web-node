@@ -3,6 +3,7 @@ import authRouter from "./auth.router/auth.routes.js";
 import carritoRouter from "./carrito.router/carrito.routes.js";
 import productoRouter from "./producto.router/producto.routes.js";
 import ligaRouter from "./liga.router/liga.routes.js";
+import pedidoRouter from "./pedido.router/pedido.routes.js";
 
 
 export class AppRoutes {
@@ -12,6 +13,7 @@ export class AppRoutes {
         router.use('/carrito', carritoRouter)
         router.use('/productos', productoRouter)
         router.use('/liga',ligaRouter)
+        router.use('/pedidos',pedidoRouter)
         return router;
     }
 }
