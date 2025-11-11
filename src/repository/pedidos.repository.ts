@@ -36,9 +36,12 @@ export class PedidoRepository {
     return pedido;
   }
 
-  async obtenerPedidosPorUsuario(userId: number) {
+  async obtenerPedidosPorUsuario(userEmail: string) {
+    const user = await prisma.user.findUnique({ where: { email: userEmail } });
+    if (!user) throw new Error("Usuario no encontrado");
+
     return await prisma.pedido.findMany({
-      where: { userId },
+      where: {  userId: user.id  },
       include: {
         productos: {
           include: { producto: true }

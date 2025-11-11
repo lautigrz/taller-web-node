@@ -39,13 +39,13 @@ export class PedidoController {
 
   async obtenerPedidosUsuario(req: Request, res: Response) {
     try {
-      const userId = req.user?.id || Number(req.params.userId);
+      const userEmail = req.user?.email;
 
-      if (!userId) {
-        return res.status(400).json({ error: "Falta el ID del usuario" });
+      if (!userEmail) {
+        return res.status(401).json({ error: "Usuario no autenticado" });
       }
 
-      const pedidos = await pedidoService.obtenerPedidosUsuario(userId);
+      const pedidos = await pedidoService.obtenerPedidosUsuario(userEmail);
 
       return res.status(200).json(pedidos);
     } catch (error: any) {

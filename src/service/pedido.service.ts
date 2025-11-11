@@ -23,8 +23,8 @@ export class PedidoService{
     }
   }
 
-  async obtenerPedidosUsuario(userId: number) {
-    const pedidos = await this.pedidoRepository.obtenerPedidosPorUsuario(userId);
+  async obtenerPedidosUsuario(userEmail: string) {
+    const pedidos = await this.pedidoRepository.obtenerPedidosPorUsuario(userEmail);
 
     return pedidos.map(pedido => ({
       ...pedido,
