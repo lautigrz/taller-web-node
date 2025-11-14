@@ -44,7 +44,8 @@ export class ProductoRepository {
                 include: {
                     equipo: { include: { liga: true } },
                     imagenes: true
-                }
+                },
+                
             })
         ]);
 
@@ -57,7 +58,9 @@ export class ProductoRepository {
                 totalPages: Math.ceil(total / limit),
                 hasNextPage: page * limit < total,
                 hasPrevPage: page > 1
+            
             }
+            
         };
     }
 
