@@ -1,4 +1,5 @@
 
+import type { Filtro } from "../dto/filtro.interface.js";
 import type { CreateProductDto } from "../dto/producto.dto.js";
 import type { Genero } from "../enums/Genero.js";
 import { prisma } from "../prisma.js";
@@ -7,21 +8,61 @@ import type { Prisma } from "@prisma/client";
 
 export class ProductoRepository {
 
-    async findAllProductos() {
+    async findAllProductos(page = 1, limit = 12, filtros: Filtro) {
+        const skip = (page - 1) * limit;
 
-        return await prisma.producto.findMany(
-            {
-                where: { habilitado: true },
+        const where: any = {
+            habilitado: true,
+        };
+
+        if (filtros.liga) {
+            where.equipo = {
+                ligaId: Number(filtros.liga)
+            };
+        }
+
+        if (filtros.equipo) {
+            where.equipoId = Number(filtros.equipo);
+        }
+
+        if (filtros.precioMax) {
+            where.precio = {
+                gte: Number(0),
+                lte: Number(filtros.precioMax)
+            }
+             console.log(filtros.precioMax)
+        }
+
+       
+
+        const [total, data] = await Promise.all([
+            prisma.producto.count({ where }),
+            prisma.producto.findMany({
+                where,
+                skip,
+                take: limit,
                 include: {
-                    equipo: {
-                        include: { liga: true }
-                    },
+                    equipo: { include: { liga: true } },
                     imagenes: true
                 }
+            })
+        ]);
+
+        return {
+            data,
+            meta: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
+                hasNextPage: page * limit < total,
+                hasPrevPage: page > 1
             }
-        );
+        };
     }
-        async findAllProductosDisabled() {
+
+
+    async findAllProductosDisabled() {
 
         return await prisma.producto.findMany(
             {

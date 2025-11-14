@@ -134,13 +134,25 @@ model PedidoProducto {
   producto      Producto  @relation(fields: [productoId], references: [id])
   productoId    Int
   cantidad      Int
-  talla         String    // Guardamos la talla seleccionada
+  talla         String    
   precioUnitario Decimal   @db.Decimal(10, 2)
   
   @@unique([pedidoId, productoId, talla])
 }
 
+model Deporte {
+  id Int  @id @default(autoincrement())
+  deporte DeporteType
+}
 
+enum DeporteType {
+  FUTBOL
+  BASQUET
+}
+enum CategoriaType {
+  SELECCION
+  CLUB
+}
 enum Rol {
   CLIENTE
   ADMIN

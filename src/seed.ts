@@ -1,21 +1,44 @@
-import { PrismaClient, Rol } from '@prisma/client';
+import { CategoriaType, DeporteType, PrismaClient, Rol } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-         const { hash } = bcrypt;
-                const hashedPassword = await hash('admin123', 10)
-    const admin = await prisma.user.create({
+    //      const { hash } = bcrypt;
+    //             const hashedPassword = await hash('admin123', 10)
+    // const admin = await prisma.user.create({
+    //     data:{
+    //         name: 'admin',
+    //         lastname:'admin',
+    //         email: 'admin@gmail.com',
+    //         password: hashedPassword,
+    //         rol: Rol.ADMIN,
+    //         direccion: 'Calle Admin 123'
+    //     }
+    // })
+
+
+    const categoria1 = await prisma.categoria.create({
         data:{
-            name: 'admin',
-            lastname:'admin',
-            email: 'admin@gmail.com',
-            password: hashedPassword,
-            rol: Rol.ADMIN,
-            direccion: 'Calle Admin 123'
+            categoria: CategoriaType.CLUB
+        }
+    })
+      const categoria2 = await prisma.categoria.create({
+        data:{
+            categoria: CategoriaType.SELECCION
         }
     })
 
+      const deporte1 = await prisma.deporte.create({
+        data:{
+            deporte: DeporteType.FUTBOL
+        }
+    })
+       const deporte12 = await prisma.deporte.create({
+        data:{
+            deporte: DeporteType.BASQUET
+        }
+    })
+    
     /*
     const liga = await prisma.liga.create({
         data: {

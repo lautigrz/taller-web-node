@@ -10,8 +10,8 @@ export class ProductoService {
 
     constructor(private productoRepository: ProductoRepository, private ligaRepository: LigaRepository) { }
 
-    async obtenerProductos() {
-        return await this.productoRepository.findAllProductos();
+    async obtenerProductos(page = 1, limit = 12, filter :any) {
+        return await this.productoRepository.findAllProductos(page,limit, filter);
     }
 
     async obtenerProductoPorId(id: number) {

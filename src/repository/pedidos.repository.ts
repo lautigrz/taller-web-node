@@ -41,15 +41,22 @@ export class PedidoRepository {
     if (!user) throw new Error("Usuario no encontrado");
 
     return await prisma.pedido.findMany({
-      where: {  userId: user.id  },
+      where: { userId: user.id },
       include: {
         productos: {
-          include: { producto: true }
+          include: {
+            producto: {
+
+              include: {
+                imagenes: true
+              }
+            }
+          }
         }
       },
       orderBy: { creadoEn: 'desc' }
     });
-    }
+  }
 
 }
 
