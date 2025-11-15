@@ -27,7 +27,6 @@ export class ProductoController {
                 precioMax: req.query.precio ? Number(req.query.precio) : undefined,
             };
 
-            console.log(filters)
             const productos = await productoService.obtenerProductos(page, limit, filters);
             res.status(200).json(productos);
         } catch (error) {
